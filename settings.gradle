@@ -1,0 +1,6 @@
+rootProject.name = 'jwp-hands-on'
+include 'cache'
+include 'thread'
+include 'servlet'
+include 'reflection'
+include 'di'

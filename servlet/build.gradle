@@ -1,0 +1,43 @@
+plugins {
+    id "java"
+    id "idea"
+}
+
+group "org.example"
+version "1.0-SNAPSHOT"
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.apache.tomcat.embed:tomcat-embed-core:10.1.0-M16"
+    implementation "org.apache.tomcat.embed:tomcat-embed-jasper:10.1.0-M16"
+    implementation "ch.qos.logback:logback-classic:1.2.10"
+    implementation "org.apache.commons:commons-lang3:3.12.0"
+
+    testImplementation "org.assertj:assertj-core:3.22.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.1"
+    testImplementation "org.mockito:mockito-core:3.+"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.1"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir file("src/main/webapp/WEB-INF/classes")
+    }
+}
+
+sourceSets {
+    main {
+        java.outputDir = file('src/main/webapp/WEB-INF/classes')
+    }
+}

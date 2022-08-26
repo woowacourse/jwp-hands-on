@@ -1,0 +1,46 @@
+plugins {
+    id "java"
+    id "idea"
+}
+
+group "org.example"
+version "1.0-SNAPSHOT"
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "ch.qos.logback:logback-classic:1.2.10"
+    implementation "org.apache.commons:commons-lang3:3.12.0"
+
+    implementation "org.springframework.boot:spring-boot-starter:2.7.3"
+    implementation "org.springframework.boot:spring-boot-starter-tomcat:2.7.3"
+    implementation "org.springframework:spring-webmvc:5.3.22"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test:2.7.3"
+
+    testImplementation "org.assertj:assertj-core:3.22.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.1"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.1"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir file("src/main/webapp/WEB-INF/classes")
+    }
+}
+
+sourceSets {
+    main {
+        java.outputDir = file('src/main/webapp/WEB-INF/classes')
+    }
+}
