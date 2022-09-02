@@ -15,6 +15,5 @@ public class CacheInterceptor implements HandlerInterceptor {
 
         final String cacheControl = CacheControl.noCache().cachePrivate().getHeaderValue();
         response.setHeader(HttpHeaders.CACHE_CONTROL, cacheControl);
-        response.setHeader(HttpHeaders.TRANSFER_ENCODING, "chunked");
     }
 }
