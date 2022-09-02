@@ -16,6 +16,8 @@ public class CacheInterceptor implements HandlerInterceptor {
         response.addHeader(
                 HttpHeaders.CACHE_CONTROL, CacheControl.noCache().cachePrivate().getHeaderValue()
         );
+        response.addHeader(HttpHeaders.TRANSFER_ENCODING, "chunked");
+        response.addHeader(HttpHeaders.CONTENT_ENCODING, "gzip");
         return true;
     }
 }
