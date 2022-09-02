@@ -1,5 +1,7 @@
 package com.example;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
@@ -10,8 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class GreetingController {
 
+    private static final Logger log = LoggerFactory.getLogger(GreetingController.class);
+
     @GetMapping("/")
-    public String index() {
+    public String index(final HttpServletResponse response) {
+        final String cacheControl = CacheControl
+            .noCache()
+            .cachePrivate()
+            .getHeaderValue();
+        response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl);
+        response.addHeader(HttpHeaders.TRANSFER_ENCODING, "chunked");
         return "index";
     }
 
@@ -25,6 +35,7 @@ public class GreetingController {
                 .cachePrivate()
                 .getHeaderValue();
         response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl);
+        log.debug("response: {}", response);
         return "index";
     }
 
