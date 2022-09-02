@@ -28,7 +28,6 @@ class ThreadTest {
     void testExtendedThread() throws InterruptedException {
         // 하단의 ExtendedThread 클래스를 Thread 클래스로 상속하고 스레드 객체를 생성한다.
         Thread thread = new ExtendedThread("hello thread");
-
         // 생성한 thread 객체를 시작한다.
          thread.start();
 

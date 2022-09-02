@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * 스레드 풀은 무엇이고 어떻게 동작할까?
@@ -25,18 +26,21 @@ class ThreadPoolsTest {
 
     @Test
     void testNewFixedThreadPool() {
-        final var executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+        final var executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
         executor.submit(logWithSleep("hello fixed thread pools"));
         executor.submit(logWithSleep("hello fixed thread pools"));
         executor.submit(logWithSleep("hello fixed thread pools"));
 
         // 올바른 값으로 바꿔서 테스트를 통과시키자.
-        final int expectedPoolSize = 0;
+        final int expectedPoolSize = 3;
         final int expectedQueueSize = 0;
 
-        assertThat(expectedPoolSize).isEqualTo(executor.getPoolSize());
-        assertThat(expectedQueueSize).isEqualTo(executor.getQueue().size());
+        assertAll(
+                () -> assertThat(expectedPoolSize).isEqualTo(executor.getPoolSize()),
+                () -> assertThat(expectedQueueSize).isEqualTo(executor.getQueue().size())
+        );
     }
+
 
     @Test
     void testNewCachedThreadPool() {
@@ -46,11 +50,13 @@ class ThreadPoolsTest {
         executor.submit(logWithSleep("hello cached thread pools"));
 
         // 올바른 값으로 바꿔서 테스트를 통과시키자.
-        final int expectedPoolSize = 0;
+        final int expectedPoolSize = 3;
         final int expectedQueueSize = 0;
 
-        assertThat(expectedPoolSize).isEqualTo(executor.getPoolSize());
-        assertThat(expectedQueueSize).isEqualTo(executor.getQueue().size());
+        assertAll(
+                () -> assertThat(expectedPoolSize).isEqualTo(executor.getPoolSize()),
+                () -> assertThat(expectedQueueSize).isEqualTo(executor.getQueue().size())
+        );
     }
 
     private Runnable logWithSleep(final String message) {
