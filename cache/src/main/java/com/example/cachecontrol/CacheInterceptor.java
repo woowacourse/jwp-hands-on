@@ -13,11 +13,7 @@ public class CacheInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                              final Object handler) {
-        response.addHeader(
-                HttpHeaders.CACHE_CONTROL, CacheControl.noCache().cachePrivate().getHeaderValue()
-        );
-        response.addHeader(HttpHeaders.TRANSFER_ENCODING, "chunked");
-        response.addHeader(HttpHeaders.CONTENT_ENCODING, "gzip");
+        response.addHeader(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().cachePrivate().getHeaderValue());
         return true;
     }
 }
