@@ -1,5 +1,7 @@
 package com.example.cachecontrol;
 
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -11,6 +13,8 @@ public class CacheInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final Exception ex) throws Exception {
-        response.setHeader("Cache-Control", "no-cache, private");
+        final CacheControl cacheControl = CacheControl.noCache()
+                .cachePrivate();
+        response.setHeader(HttpHeaders.CACHE_CONTROL, cacheControl.getHeaderValue());
     }
 }
