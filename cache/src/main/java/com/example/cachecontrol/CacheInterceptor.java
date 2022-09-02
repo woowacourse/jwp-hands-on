@@ -13,6 +13,9 @@ public class CacheInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
         ModelAndView modelAndView) {
+        if (response.containsHeader(HttpHeaders.CACHE_CONTROL)) {
+            return;
+        }
         final String cacheControl = CacheControl
             .noCache()
             .cachePrivate()
