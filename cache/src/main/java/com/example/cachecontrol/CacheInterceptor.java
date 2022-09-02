@@ -15,6 +15,10 @@ public class CacheInterceptor implements HandlerInterceptor {
                                 final HttpServletResponse response,
                                 final Object handler,
                                 final Exception ex) {
+        if (response.containsHeader(HttpHeaders.CACHE_CONTROL)) {
+            return;
+        }
+
         final String cacheControl = CacheControl
                 .noCache()
                 .cachePrivate()
