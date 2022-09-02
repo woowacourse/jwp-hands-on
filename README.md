@@ -44,6 +44,17 @@ Cache-Control: no-cache, private
 CacheWebConfig 클래스에서 Cache-Control 설정을 적용하면 된다.
 
 
+### 1단계 - HTTP Compression 설정하기
+HTTP 응답을 압축하면 웹 사이트의 성능을 높일 수 있다.
+스프링 부트 설정을 통해 gzip과 같은 HTTP 압축 알고리즘을 적용시킬 수 있다.
+테스트 코드가 통과하는지
+gzip이 적용됐는지 테스트 코드가 아닌 웹 브라우저에서 HTTP 응답의 헤더를 직접 확인한다.
+GreetingControllerTest 클래스의 testCompression() 테스트 메서드를 통과시키면 된다.
+
+### 힌트
+스프링 부트 공식 문서의 Enable HTTP Response Compression를 참고해서 적용해본다.
+min-response-size는 기본 2KB이기 때문에 작은 크기의 html 파일은 압축하지 않는다. 값을 10으로 설정해준다.
+
 ### 2단계 - ETag/If-None-Match 적용하기
 - ETag와 If-None-Match를 사용하여 HTTP 캐싱을 적용해보자.
 - Spring mvc에서 ShallowEtagHeaderFilter 클래스를 제공한다.
