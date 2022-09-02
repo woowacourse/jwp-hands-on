@@ -1,2 +1,7 @@
 handlebars:
   suffix: .html
+
+server:
+  compression:
+    enabled: true
+    min-response-size: 10
