@@ -1,2 +1,7 @@
 handlebars:
   suffix: .html
+
+server:
+  compression:
+    enabled: true # 파일 압축 혀용
+    min-response-size: 215 # 압축을 시작할 최소 사이즈, 현재 테스트 코드에서 사용하는 Html size
