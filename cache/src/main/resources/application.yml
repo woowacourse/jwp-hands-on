@@ -4,4 +4,4 @@ handlebars:
 server:
   compression:
     enabled: true
-    min-response-size: 10240
+    min-response-size: 10

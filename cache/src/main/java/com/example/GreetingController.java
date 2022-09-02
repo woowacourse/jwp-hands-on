@@ -1,13 +1,13 @@
 package com.example;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class GreetingController {
@@ -21,7 +21,6 @@ public class GreetingController {
             .cachePrivate()
             .getHeaderValue();
         response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl);
-        response.addHeader(HttpHeaders.TRANSFER_ENCODING, "chunked");
         return "index";
     }
 
@@ -31,11 +30,10 @@ public class GreetingController {
     @GetMapping("/cache-control")
     public String cacheControl(final HttpServletResponse response) {
         final String cacheControl = CacheControl
-                .noCache()
-                .cachePrivate()
-                .getHeaderValue();
+            .noCache()
+            .cachePrivate()
+            .getHeaderValue();
         response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl);
-        log.debug("response: {}", response);
         return "index";
     }
 
