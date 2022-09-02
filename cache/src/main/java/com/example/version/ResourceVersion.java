@@ -1,10 +1,9 @@
 package com.example.version;
 
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javax.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ResourceVersion {
