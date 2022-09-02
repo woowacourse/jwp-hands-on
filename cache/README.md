@@ -6,6 +6,8 @@
 ### 0단계 - 휴리스틱 캐싱 제거하기
 - [ ] 모든 응답의 `Cache-Control` header 값을 `no-cache, private`로 설정한다.
 
+[학습한 내용](https://forky-freeky-forky.notion.site/Http-Caching-cb23699ac438453a8bff5e1f9b980d91)
+
 ### 1단계 - HTTP Compression 설정하기
 - [ ] 모든 응답에 `gzip` 압축 알고리즘을 적용한다.
 
