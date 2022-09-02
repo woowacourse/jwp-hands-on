@@ -57,3 +57,23 @@
     - 최소길이를 조정하고싶다면 `server.compression.min-response-size` 를 통해 수정 가능
     - 콘텐츠 유형을 조정하고싶다면 `server.compression.mime-types` 를 통해 수정 가능
     - 정상적으로 압축되었다면 응답 헤더에 `Content-Encoding: gzip` 이 추가되었을 것이다.
+
+### 2단계 - ETag/If-None-Match 적용하기
+
+- ETag
+    - HTTP 응답에서 특정 버전의 리소스를 식별하는 식별자
+    - 웹서버가 내용을 확인하고 변하지 않았다면 캐시 유지, 변했다면 덮어쓰기 및 새로운 ETag 생성
+    - 유효기간이 지난 예전의 ETag를 가지고 해당 캐시를 수정하려고 한다면 **412 Precondition Failed** 반환
+    - 유일한 값으로써 다른 서버들이 추적하는 용도로도 이용 가능
+
+- If-None-Match
+    - ETag가 같다면 서버는 **304 Not Modified**
+      를 응답하여 캐시를 그대로 사용하고, 다르다면 컨텐츠를 새로 내려주는 설정
+    - etag 값을 담고있음
+
+- ShallowEtagHeaderFilter
+
+  : 스프링이 제공하는 etag 관련 필터
+
+    - request, response에 etag 부여 및 검증
+    - etag가 존재하는 동일 URI 요청시 자동으로 If-None-Match를 헤더에 추가
