@@ -13,8 +13,10 @@ public class CacheInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final Exception ex) throws Exception {
-        final CacheControl cacheControl = CacheControl.noCache()
-                .cachePrivate();
-        response.setHeader(HttpHeaders.CACHE_CONTROL, cacheControl.getHeaderValue());
+        if (!response.containsHeader(HttpHeaders.CACHE_CONTROL)) {
+            final CacheControl cacheControl = CacheControl.noCache()
+                    .cachePrivate();
+            response.setHeader(HttpHeaders.CACHE_CONTROL, cacheControl.getHeaderValue());
+        }
     }
 }
