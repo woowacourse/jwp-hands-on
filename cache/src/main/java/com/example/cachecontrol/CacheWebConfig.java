@@ -11,5 +11,7 @@ public class CacheWebConfig implements WebMvcConfigurer {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(new NoCacheInterceptor())
                 .addPathPatterns("/");
+        registry.addInterceptor(new CacheBustingInterceptor())
+                .addPathPatterns("/resources/**");
     }
 }

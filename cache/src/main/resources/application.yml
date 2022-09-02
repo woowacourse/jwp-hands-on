@@ -4,5 +4,5 @@ handlebars:
 server:
   compression:
     enabled: true
-    min-response-size: 100
+    min-response-size: 200
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
