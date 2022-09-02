@@ -1,6 +1,9 @@
 package com.example;
 
+import static com.example.version.CacheBustingWebConfig.PREFIX_STATIC_RESOURCES;
+
 import com.example.version.ResourceVersion;
+import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
-import java.time.Duration;
-
-import static com.example.version.CacheBustingWebConfig.PREFIX_STATIC_RESOURCES;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GreetingControllerTest {
@@ -74,7 +73,7 @@ class GreetingControllerTest {
      * 정적 파일에 변경 사항이 생기면 배포할 때 버전을 바꿔주면 적용된 캐싱을 무효화(Caching Busting)할 수 있다.
      */
     @Test
-    void testCacheBustingOfStaticResources() {
+    void testCacheBustingOfStaticRResources() {
         final var uri = String.format("%s/%s/js/index.js", PREFIX_STATIC_RESOURCES, version.getVersion());
 
         // "/resource-versioning/js/index.js" 경로의 정적 파일에 ETag를 사용한 캐싱이 적용되었는지 확인한다.
