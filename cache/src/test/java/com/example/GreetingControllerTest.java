@@ -1,6 +1,9 @@
 package com.example;
 
+import static com.example.version.CacheBustingWebConfig.PREFIX_STATIC_RESOURCES;
+
 import com.example.version.ResourceVersion;
+import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
-import java.time.Duration;
-
-import static com.example.version.CacheBustingWebConfig.PREFIX_STATIC_RESOURCES;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GreetingControllerTest {
@@ -98,5 +97,7 @@ class GreetingControllerTest {
                 .exchange()
                 .expectStatus()
                 .isNotModified();
+
+        log.info(etag);
     }
 }
