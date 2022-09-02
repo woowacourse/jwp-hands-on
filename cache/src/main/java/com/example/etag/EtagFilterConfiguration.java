@@ -8,11 +8,11 @@ import org.springframework.web.filter.ShallowEtagHeaderFilter;
 @Configuration
 public class EtagFilterConfiguration {
 
-   @Bean
-   public FilterRegistrationBean<ShallowEtagHeaderFilter> shallowEtagHeaderFilter() {
-       FilterRegistrationBean<ShallowEtagHeaderFilter> filterRegistrationBean
-           = new FilterRegistrationBean<>( new ShallowEtagHeaderFilter());
-       filterRegistrationBean.addUrlPatterns("/etag/*");
-       return filterRegistrationBean;
-   }
+    @Bean
+    public FilterRegistrationBean<ShallowEtagHeaderFilter> shallowEtagHeaderFilter() {
+        FilterRegistrationBean<ShallowEtagHeaderFilter> filterRegistrationBean
+            = new FilterRegistrationBean<>(new ShallowEtagHeaderFilter());
+        filterRegistrationBean.addUrlPatterns("/etag/*");
+        return filterRegistrationBean;
+    }
 }
