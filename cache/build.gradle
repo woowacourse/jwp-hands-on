@@ -19,6 +19,9 @@ dependencies {
     implementation 'pl.allegro.tech.boot:handlebars-spring-boot-starter:0.3.4'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.7.2'
     implementation 'org.springframework.boot:spring-boot-starter-webflux:2.7.2'
+
+    implementation 'net.rakugakibox.spring.boot:logback-access-spring-boot-starter:2.7.1'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.2'
 }
 
