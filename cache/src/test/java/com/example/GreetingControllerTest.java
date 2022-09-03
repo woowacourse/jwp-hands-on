@@ -25,6 +25,14 @@ class GreetingControllerTest {
     @Autowired
     private WebTestClient webTestClient;
 
+    /**
+     * HTTP 응답 헤더에 Cache-Control가 없어도 웹 브라우저는 `휴리스틱 캐싱`에 따른 암시적 캐싱을 한다.
+     * 의도하지 않은 캐싱을 막기 위해 모든 응답의 헤더에 Cache-Control: no-cache를 명시한다.
+     * 또한, 쿠키나 사용자 개인 정보 유출을 막기 위해 private도 추가한다.
+     *
+     * 인터셉터를 통해 모든 응답 헤더의 기본 캐싱을 아래와 같이 설정한다.
+     * `Cache-Control: no-cache, private`
+     */
     @Test
     void testNoCachePrivate() {
         final var response = webTestClient
