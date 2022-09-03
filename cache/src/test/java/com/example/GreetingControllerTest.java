@@ -76,6 +76,14 @@ class GreetingControllerTest {
         log.info("response body\n{}", response.getResponseBody());
     }
 
+    /**
+     * ETag와 If-None-Match를 사용하여 HTTP 캐싱을 적용해보자.
+     * Spring mvc에서 ShallowEtagHeaderFilter 클래스를 제공한다.
+     * 필터를 사용하여 /etag 경로만 ETag를 적용하자.
+     *
+     * 서버측에서 응답 메시지에 Etag 헤더 값만 추가해줘도
+     * 브라우저에서 자동으로 If-None-Match 헤더에 해당 값 추가하여 재검증 작업 수행!
+     */
     @Test
     void testETag() {
         final var response = webTestClient
