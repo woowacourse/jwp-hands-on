@@ -3,6 +3,10 @@
 - [HTTP 캐싱](https://www.youtube.com/watch?v=UxNz_08oS4E)
 - [HTTP 1.1 공식문서: RFC 2616](https://www.rfc-editor.org/rfc/rfc2616)
 - [MDN HTTP Caching](https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching)
+   
+- HTTP 압축
+  - [Enable HTTP Response Compression](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto.webserver.enable-response-compression)
+  - [MDN Transfer-Encoding 응답 헤더](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Transfer-Encoding)
 
 ## 정리자료
 

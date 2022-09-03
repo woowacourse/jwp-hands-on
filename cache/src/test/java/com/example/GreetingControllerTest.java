@@ -1,6 +1,9 @@
 package com.example;
 
+import static com.example.version.CacheBustingWebConfig.PREFIX_STATIC_RESOURCES;
+
 import com.example.version.ResourceVersion;
+import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
-import java.time.Duration;
-
-import static com.example.version.CacheBustingWebConfig.PREFIX_STATIC_RESOURCES;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GreetingControllerTest {
@@ -46,16 +45,31 @@ class GreetingControllerTest {
         log.info("response body\n{}", response.getResponseBody());
     }
 
+    /**
+     * HTTP 응답을 압축하면 웹 사이트의 성능을 높일 수 있다.
+     * 스프링 부트 설정을 통해 gzip과 같은 HTTP 압축 알고리즘을 적용시킬 수 있다.
+     * gzip이 적용됐는지 테스트 코드가 아닌 웹 브라우저에서 HTTP 응답의 헤더를 직접 확인한다.
+     *
+     * `server.compression.enabled=true`
+     * `server.compression.min-response-size=10`
+     * - 기본적으로 2KB(2048 바이트) 이상의 응답에 대해서만 압축 수행됨.
+     * - 작은 크기의 html 파일도 압축되도록 `min-response-size` 값을 10 바이트로 설정.
+     *
+     * HTTP Compression 수행된 경우 브라우저 응답에 추가되는 헤더 값들
+     * - `Content-Encoding: gzip`
+     * - `Transfer-Encoding: chunked`
+     */
     @Test
     void testCompression() {
         final var response = webTestClient
                 .get()
                 .uri("/")
+                .header(HttpHeaders.ACCEPT_ENCODING, "gzip")
                 .exchange()
                 .expectStatus().isOk()
 
                 // gzip으로 요청 보내도 어떤 방식으로 압축할지 서버에서 결정한다.
-                // 웹브라우저에서 localhost:8080으로 접근하면 응답 헤더에 "Content-Encoding: gzip"이 있다.
+                // 웹브라우저에서 localhost:8080으로 접근하면 응답 헤더에 "Content-Encoding: gzip" 포함되는 것 확인 가능.
                 .expectHeader().valueEquals(HttpHeaders.TRANSFER_ENCODING, "chunked")
                 .expectBody(String.class).returnResult();
 
