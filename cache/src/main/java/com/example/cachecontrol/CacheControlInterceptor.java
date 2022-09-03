@@ -14,10 +14,16 @@ public class CacheControlInterceptor implements HandlerInterceptor {
                            HttpServletResponse response,
                            Object handler,
                            ModelAndView modelAndView) {
-        final String cacheControl = CacheControl
-                .noCache()
+        final var headers = response.getHeaderNames();
+        if (headers.contains(HttpHeaders.CACHE_CONTROL)) {
+            return;
+        }
+        response.addHeader(HttpHeaders.CACHE_CONTROL, defaultCacheControl());
+    }
+
+    private String defaultCacheControl() {
+        return CacheControl.noCache()
                 .cachePrivate()
                 .getHeaderValue();
-        response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl);
     }
 }
