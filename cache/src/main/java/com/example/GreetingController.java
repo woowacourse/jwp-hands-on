@@ -35,7 +35,7 @@ public class GreetingController {
     }
 
     @GetMapping("/etag")
-    public String etag() {
+    public String etag(final HttpServletResponse response) {
         return "index";
     }
 
