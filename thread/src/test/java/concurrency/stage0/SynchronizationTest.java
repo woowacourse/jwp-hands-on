@@ -1,12 +1,11 @@
 package concurrency.stage0;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
  * 다중 스레드 환경에서 두 개 이상의 스레드가 변경 가능한(mutable) 공유 데이터를 동시에 업데이트하면 경쟁 조건(race condition)이 발생한다.
@@ -41,7 +40,7 @@ class SynchronizationTest {
 
         private int sum = 0;
 
-        public void calculate() {
+        public synchronized void calculate() {
             setSum(getSum() + 1);
         }
 
@@ -49,6 +48,10 @@ class SynchronizationTest {
             return sum;
         }
 
+        /**
+         * 여기에 synchronized 설정하면 test fail!
+         * 동시에 calculate()가 호출되면 이미 다른 쓰레드에서 getSum()이 호출되므로 쓰레드 간섭(Thread Interference) 방지 불가!
+         */
         public void setSum(int sum) {
             this.sum = sum;
         }
