@@ -1,6 +1,10 @@
 server:
   tomcat:
-    accept-count: 1
-    max-connections: 1
+    accept-count: 10 # 요청을 처리할 유휴 thread가 없을 때 요청을 메시징할 큐의 크기
+    max-connections: 4 # 하나의 tomcat 인스턴스가 유지할 수 있는 커넥션 수 (연결되어있는 커넥션 수가 아닌 socket fd 수)
     threads:
-      max: 2
+      max: 2 # tomcat의 thread 수, Active User 수를 의미하고 동시에 처리될 수 있는 transaction 수
+
+# max-connections는 threads.max보다 많아야한다.
+# 스레드의 요청 수행 시간 < 커넥션 연결 & 해제 시간
+# accept-count는 10 내외로 설정해서 순간적인 괴부화에 대응한다.

@@ -1,12 +1,13 @@
 package concurrency.stage0;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 다중 스레드 환경에서 두 개 이상의 스레드가 변경 가능한(mutable) 공유 데이터를 동시에 업데이트하면 경쟁 조건(race condition)이 발생한다.
@@ -17,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * https://docs.oracle.com/javase/tutorial/essential/concurrency/sync.html
  */
 class SynchronizationTest {
+
+    private static final Logger log = LoggerFactory.getLogger(SynchronizationTest.class);
 
     /**
      * 테스트가 성공하도록 SynchronizedMethods 클래스에 동기화를 적용해보자.
@@ -42,7 +45,13 @@ class SynchronizationTest {
         private int sum = 0;
 
         public void calculate() {
-            setSum(getSum() + 1);
+            log.info("current sum: {}", getSum());
+            synchronized (this) {
+                final int before = getSum();
+                setSum(getSum() + 1);
+                final int after = getSum();
+                log.info("synchronized method finished... {} -> {}", before, after);
+            }
         }
 
         public int getSum() {
