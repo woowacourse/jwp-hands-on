@@ -37,4 +37,10 @@ class ConcurrencyTest {
         // 하지만 디버거로 개별 스레드를 일시 중지하면 if절 조건이 true가 되고 크기가 2가 된다. 왜 그럴까?
         assertThat(userServlet.getUsers()).hasSize(1);
     }
+    /*
+    * UserServlet은 users라는 리스트를 상태로 가진다.
+    * 두 개의 쓰레드를 동시에 실행하는 상황이라면 각 쓰레드가 users의 size가 0일 때의 상태를 참조하여
+    * users.contains(..) 구문을 실행할 가능성이 있다.
+    * 이런 상황이 발생하면, users에 같은 name을 갖는 사용자가 중복되어 추가될 수 있다.
+    * */
 }
