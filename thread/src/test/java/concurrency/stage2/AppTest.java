@@ -41,6 +41,19 @@ class AppTest {
 
         assertThat(count.intValue()).isEqualTo(2);
     }
+    /*
+    * 그렇다면
+    * server:
+  tomcat:
+    accept-count: 1
+    max-connections: 1
+    threads:
+      max: 2
+      * 이 조건에는 왜 테스트가 통과하지 않을까??
+      * 요청시의 timeout을 1초로 지정해두었기 때문.
+      * 실제로 서버에서는 2개의 요청을 처리하게 되지만,
+      * 한 개의 요청에 대해 요청 후 1초내로 OK 응답이 오지 않았으므로 테스트코드의 increment가 되지 않았음.
+    * */
 
     private static void incrementIfOk(final HttpResponse<String> response) {
         if (response.statusCode() == 200) {
