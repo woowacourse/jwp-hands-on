@@ -4,7 +4,7 @@
 
 ### 학습 순서
 - [cache](./cache/README.md)
-- thread
+- [thread](./thread/README.md)
 - servlet
 - reflection
 - di
