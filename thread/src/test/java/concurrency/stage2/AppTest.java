@@ -23,6 +23,12 @@ class AppTest {
      */
     @Test
     void test() throws Exception {
+        /*
+        저글링을 예시로 들어보자.
+        accept-count : 아직 저글링하고 있지 않은 공의 개수
+        max-connection : 저글링하고 있는 공의 개수
+        threads.max : 저글링에 쓰는 손의 개수
+         */
         final var NUMBER_OF_THREAD = 10;
         var threads = new Thread[NUMBER_OF_THREAD];
 
