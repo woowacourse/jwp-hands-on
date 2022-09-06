@@ -1,13 +1,12 @@
 package concurrency.stage2;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
 public class SampleController {
@@ -27,7 +26,7 @@ public class SampleController {
     @ResponseBody
     public String helloWorld() throws InterruptedException {
         Thread.sleep(500);
-        log.info("http call count : {}", count.incrementAndGet());
+        log.info("http call count : {}, name : {}", count.incrementAndGet(), Thread.currentThread().getName());
         return helloWorldService.helloWorld();
     }
 }
