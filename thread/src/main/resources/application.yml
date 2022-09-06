@@ -1,6 +1,7 @@
 server:
   tomcat:
-    accept-count: 1
-    max-connections: 1
+    accept-count: 3 # OS의 커넥션 큐 크기. 웹 서버의 커넥션 큐를 초과한 만큼 OS에서 대기.
+    max-connections: 5 # 서버의 커넥션 큐 크기.
     threads:
-      max: 2
+      max: 2 # 동시에 처리할 수 있는 요청의 개수.
+      min-spare: 1 # 무조건 유지하는 최초 쓰레드 개수.

@@ -1,15 +1,15 @@
 package concurrency.stage2;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.http.HttpResponse;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class AppTest {
 
-    private static final AtomicInteger count = new AtomicInteger(0);
+    private static final AtomicInteger successResponseCount = new AtomicInteger(0);
+    private static final AtomicInteger requestTimedOutCount = new AtomicInteger(0);
 
     /**
      * 1. App 클래스의 애플리케이션을 실행시켜 서버를 띄운다.
@@ -32,19 +32,23 @@ class AppTest {
 
         for (final var thread : threads) {
             thread.start();
-            Thread.sleep(50);
+             Thread.sleep(50);
         }
 
         for (final var thread : threads) {
-            thread.join();
+            thread.join(); // 처리 완료될 때까지 평생 대기.
         }
 
-        assertThat(count.intValue()).isEqualTo(2);
+        assertThat(successResponseCount.intValue()).isEqualTo(2);
     }
 
     private static void incrementIfOk(final HttpResponse<String> response) {
+        if (response == null) {
+            System.out.println("request timed out: " + requestTimedOutCount.incrementAndGet());
+            return;
+        }
         if (response.statusCode() == 200) {
-            count.incrementAndGet();
+            successResponseCount.incrementAndGet();
         }
     }
 }
