@@ -24,6 +24,7 @@ class ThreadTest {
      * 먼저 Thread 클래스를 상속해서 스레드로 만드는 방법을 살펴보자.
      * 주석을 참고하여 테스트 코드를 작성하고, 테스트를 실행시켜서 메시지가 잘 나오는지 확인한다.
      */
+
     @Test
     void testExtendedThread() throws InterruptedException {
         // 하단의 ExtendedThread 클래스를 Thread 클래스로 상속하고 스레드 객체를 생성한다.
