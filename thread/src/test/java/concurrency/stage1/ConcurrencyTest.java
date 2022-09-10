@@ -35,6 +35,15 @@ class ConcurrencyTest {
 
         // 이미 gugu로 가입한 사용자가 있어서 UserServlet.join() 메서드의 if절 조건은 false가 되고 크기는 1이다.
         // 하지만 디버거로 개별 스레드를 일시 중지하면 if절 조건이 true가 되고 크기가 2가 된다. 왜 그럴까?
+
+        //내..생각에는 HttpProcessor 생성할때 UserServlet()를 넣는데 저 안에 있는
+        //     private final List<User> users = new ArrayList<>();
+        // 이게 전역변수라 JVM 에서 전역변수를 다루는 메소드영역에 올라갈 것 같음
+        // 그게 뭐였지 뭔 클래스 영역인가 그랬는데, 거긴 스레드들끼리 다 공유하는 값이라
+        // 뭐 실제디비라면 업데이트 할거면 동시접근하지말고 제한이 있어야함..
+        // 아니면 전역변수로 두지 않는 방법도 있는디 그건 이번거에서 안될거같고
+        // 동기화가 제떄 되게 하는게 여기서는 그나마 가능한 방법일듯
+
         assertThat(userServlet.getUsers()).hasSize(1);
     }
 }
