@@ -1,6 +1,11 @@
 package reflection;
 
 public class Junit3Test {
+
+    public static void staticMethod() {
+        System.out.println("Running static method");
+    }
+
     public void test1() throws Exception {
         System.out.println("Running Test1");
     }
