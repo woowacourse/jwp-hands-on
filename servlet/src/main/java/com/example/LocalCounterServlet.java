@@ -25,7 +25,7 @@ public class LocalCounterServlet extends HttpServlet {
     @Override
     protected void service(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         getServletContext().log("service() 호출");
-        response.addHeader("Content-Type", "text/html; charset=utf-8");
+        response.addHeader("Content-Type",  "text/html; charset=utf-8");
         int localCounter = 0;
         localCounter++;
         response.getWriter().write(String.valueOf(localCounter));
