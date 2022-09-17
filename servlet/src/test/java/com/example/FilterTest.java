@@ -21,6 +21,8 @@ class FilterTest {
         assertThat(response.statusCode()).isEqualTo(200);
 
         // 테스트가 통과하도록 CharacterEncodingFilter 클래스를 수정해보자.
+        // -> ServletResponse의 기본 인코딩은 ISO 8859-1 로 한글 지원이 안됨.
+        // 따라서 유니코드인 UTF-8을 적용해서 한글인코딩을 하도록 변경!
         assertThat(response.body()).isEqualTo(인코딩);
     }
 }
