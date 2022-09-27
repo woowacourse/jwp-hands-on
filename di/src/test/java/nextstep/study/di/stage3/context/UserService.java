@@ -6,6 +6,8 @@ class UserService {
 
     private UserDao userDao;
 
+    private UserService() {}
+
     public UserService(final UserDao userDao) {
         this.userDao = userDao;
     }
@@ -14,6 +16,4 @@ class UserService {
         userDao.insert(user);
         return userDao.findById(user.getId());
     }
-
-    private UserService() {}
 }
