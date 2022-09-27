@@ -1,6 +1,7 @@
 package nextstep.study.di.stage4.annotations;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -15,6 +16,7 @@ class DIContainer {
 
     private DIContainer(final Set<Class<?>> classes) {
         this.beans = createBeans(classes);
+        initialBeans();
     }
 
     private Set<Object> createBeans(final Set<Class<?>> classes) {
@@ -36,6 +38,34 @@ class DIContainer {
 
     public static DIContainer createContainerForPackage(final String rootPackageName) {
         return new DIContainer(ClassPathScanner.getAllClassesInPackage(rootPackageName));
+    }
+
+    private void initialBeans() {
+        for (Object bean : beans) {
+            Field[] fields = bean.getClass().getDeclaredFields();
+            initialFields(bean, fields);
+        }
+    }
+
+    private void initialFields(final Object bean, final Field[] fields) {
+        for (Field field : fields) {
+            setField(bean, field);
+        }
+    }
+
+    private void setField(final Object bean, final Field field) {
+        try {
+            if (hasInjectAnnotation(field)) {
+                field.setAccessible(true);
+                field.set(bean, getBean(field.getType()));
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean hasInjectAnnotation(final Field field) {
+        return field.isAnnotationPresent(Inject.class);
     }
 
     @SuppressWarnings("unchecked")
