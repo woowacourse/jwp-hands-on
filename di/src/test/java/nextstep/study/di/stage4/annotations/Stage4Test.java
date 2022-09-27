@@ -13,7 +13,7 @@ class Stage4Test {
      * 해당 역할은 ClassPathScanner 클래스에게 맡기자.
      */
     @Test
-    void stage4() {
+    void stage4() throws Exception {
         final var user = new User(1L, "gugu");
 
         final var diContext = createDIContainer();
@@ -24,7 +24,7 @@ class Stage4Test {
         assertThat(actual.getAccount()).isEqualTo("gugu");
     }
 
-    private static DIContainer createDIContainer() {
+    private static DIContainer createDIContainer() throws Exception {
         final var rootPackageName = Stage4Test.class.getPackage().getName();
         return DIContainer.createContainerForPackage(rootPackageName);
     }
