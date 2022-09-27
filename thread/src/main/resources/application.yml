@@ -1,6 +1,6 @@
 server:
   tomcat:
-    accept-count: 1
-    max-connections: 1
+    accept-count: 5 # max connection에 도달했을 때 대기할 수 있는 커넥션 수
+    max-connections: 5 # 서버가 주어진 시간에 수락하고 처리할 수 있는 최대 커넥션 수
     threads:
-      max: 2
+      max: 2 # 생성되는 스레드 총 개수
