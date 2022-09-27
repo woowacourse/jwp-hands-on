@@ -50,7 +50,7 @@ class DIContainer {
     }
 
     private void fillField(final Field field, final Object bean) throws Exception {
-        if (field.isAnnotationPresent(Inject.class)) {
+        if (field.isAnnotationPresent(Inject.class) || field.get(bean) == null) {
             Object findBean = getBean(field.getType());
             field.set(bean, findBean);
         }
