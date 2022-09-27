@@ -40,6 +40,11 @@ class DIContainer {
 
     @SuppressWarnings("unchecked")
     public <T> T getBean(final Class<T> aClass) {
-        return null;
+        Object instance = beans.stream()
+                .filter(aClass::isInstance)
+                .findAny()
+                .orElseThrow(() -> new NoSuchElementException("해당 클래스 타입의 빈은 존재하지 않습니다. -> " + aClass));
+
+        return (T) instance;
     }
 }
