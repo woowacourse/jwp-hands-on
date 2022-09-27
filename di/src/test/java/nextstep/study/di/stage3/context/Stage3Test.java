@@ -1,22 +1,19 @@
 package nextstep.study.di.stage3.context;
 
-import nextstep.study.User;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.HashSet;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import nextstep.study.User;
+import org.junit.jupiter.api.Test;
 
 class Stage3Test {
 
     /**
-     * 객체를 생성하고 연결해주는 역할을 DIContainer라는 클래스에게 맡기자.
-     * DIContainer는 애플리케이션을 구성하는 객체의 구조와 관계를 정의한 설계도 역할을 한다.
-     * 어떤 객체가 어떤 객체를 사용하는지 정의하는 역할을 한다.
-     * 테스트가 통과하도록 DIContainer 클래스를 구현하자.
+     * 객체를 생성하고 연결해주는 역할을 DIContainer라는 클래스에게 맡기자. DIContainer는 애플리케이션을 구성하는 객체의 구조와 관계를 정의한 설계도 역할을 한다. 어떤 객체가 어떤 객체를
+     * 사용하는지 정의하는 역할을 한다. 테스트가 통과하도록 DIContainer 클래스를 구현하자.
      */
     @Test
-    void stage3() {
+    void stage3() throws Exception {
         final var user = new User(1L, "gugu");
 
         final var diContainer = createDIContainer();
@@ -39,8 +36,8 @@ class Stage3Test {
     /**
      * DIContainer가 관리하는 객체는 빈(bean) 객체라고 부른다.
      */
-    private static DIContainer createDIContainer() {
-        var classes = new HashSet<Class<?>>();
+    private static DIContainer createDIContainer() throws Exception {
+        final var classes = new HashSet<Class<?>>();
         classes.add(InMemoryUserDao.class);
         classes.add(UserService.class);
         return new DIContainer(classes);
