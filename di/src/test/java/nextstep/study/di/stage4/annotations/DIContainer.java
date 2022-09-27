@@ -46,12 +46,18 @@ class DIContainer {
                 .getDeclaredFields();
         for (final Field field : fields) {
             final Optional<Object> injectableBean = findInjectableBean(beanInstances, field);
-            injectableBean.ifPresent(it -> injectBeanToField(beanInstance, field, it));
+            injectableBean.ifPresent(it -> {
+                log.info("Inject {} to {}", it.getClass(), beanInstance.getClass());
+                injectBeanToField(beanInstance, field, it);
+            });
         }
         return beanInstance;
     }
 
     private Optional<Object> findInjectableBean(final Set<Object> beanInstances, final Field field) {
+        if (field.getDeclaredAnnotation(Inject.class) == null) {
+            return Optional.empty();
+        }
         return beanInstances.stream()
                 .filter(it -> field.getType().isInstance(it))
                 .findFirst();
