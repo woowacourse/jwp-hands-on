@@ -1,11 +1,10 @@
 package nextstep.study.di.stage3.context;
 
-import nextstep.study.User;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashSet;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import nextstep.study.User;
+import org.junit.jupiter.api.Test;
 
 class Stage3Test {
 
