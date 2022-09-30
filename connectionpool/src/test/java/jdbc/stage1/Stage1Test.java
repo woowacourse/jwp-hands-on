@@ -1,13 +1,12 @@
 package jdbc.stage1;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.sql.SQLException;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.jupiter.api.Test;
-
-import java.sql.SQLException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage1Test {
 
@@ -28,16 +27,17 @@ class Stage1Test {
      */
     @Test
     void testJdbcConnectionPool() throws SQLException {
-        final JdbcConnectionPool jdbcConnectionPool = null;
+        final var jdbcConnectionPool = JdbcConnectionPool.create(H2_URL, USER, PASSWORD);
 
         assertThat(jdbcConnectionPool.getActiveConnections()).isZero();
         try (final var connection = jdbcConnectionPool.getConnection()) {
             assertThat(connection.isValid(1)).isTrue();
             assertThat(jdbcConnectionPool.getActiveConnections()).isEqualTo(1);
         }
+        // try-with-resources문으로 connection 닫음!
         assertThat(jdbcConnectionPool.getActiveConnections()).isZero();
 
-        jdbcConnectionPool.dispose();
+        jdbcConnectionPool.dispose(); // Closes all unused pooled connections.
     }
 
     /**
@@ -61,6 +61,14 @@ class Stage1Test {
     @Test
     void testHikariCP() {
         final var hikariConfig = new HikariConfig();
+
+        hikariConfig.setJdbcUrl(H2_URL); // dataSource or dataSourceClassName or jdbcUrl is required.
+        hikariConfig.setUsername(USER); // Wrong user name or password
+        // hikariConfig.setPassword(PASSWORD); // 디폴트 값이 ""이므로 생략 가능
+        hikariConfig.setMaximumPoolSize(5);
+        hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
+        hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+        hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
         final var dataSource = new HikariDataSource(hikariConfig);
         final var properties = dataSource.getDataSourceProperties();
