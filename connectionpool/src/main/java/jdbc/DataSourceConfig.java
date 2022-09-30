@@ -15,7 +15,6 @@ public class DataSourceConfig {
     private static final String USER = "sa";
     private static final String PASSWORD = "";
 
-
     @Bean
     public DataSource hikariDataSource() {
         final var hikariConfig = new HikariConfig();
