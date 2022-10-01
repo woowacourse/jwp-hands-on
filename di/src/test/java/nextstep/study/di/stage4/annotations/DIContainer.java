@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.reflections.Reflections;
 
 /**
  * 스프링의 BeanFactory, ApplicationContext에 해당되는 클래스
@@ -22,18 +21,24 @@ class DIContainer {
     }
 
     /**
-     * reflections로 아래 어노테이션이 붙은 애들을 빈으로 등록한다.
-     * @Service : 클래스
-     * @Repository : 클래스
+     * 넣어준 패키지 하위의 모든 클래스를 찾아 반환하는 ClassPathScanner를 구현한다.
+     * 반환받은 클래스들 중 아래 어노테이션이 붙은 클래스들의 인스턴스만 빈으로 등록한다.
+         * @Service
+         * @Repository
      *
      */
     public static DIContainer createContainerForPackage(final String rootPackageName) {
         // @Service 가 붙은 클래스들의 인스턴스를 bean으로 등록하자.
-        final Reflections reflections = new Reflections(rootPackageName);
-        final Set<Class<?>> classes = new HashSet<>();
-        classes.addAll(reflections.getTypesAnnotatedWith(Service.class));
-        classes.addAll(reflections.getTypesAnnotatedWith(Repository.class));
-        return new DIContainer(classes);
+        final Set<Class<?>> allClasses = ClassPathScanner.getAllClassesInPackage(rootPackageName);
+        final Set<Class<?>> injectClasses = allClasses.stream()
+                .filter(DIContainer::isComponent)
+                .collect(Collectors.toSet());
+        return new DIContainer(injectClasses);
+    }
+
+    private static boolean isComponent(final Class<?> aClass) {
+        return aClass.isAnnotationPresent(Service.class)
+                || aClass.isAnnotationPresent(Repository.class);
     }
 
     private void initContainer(final Set<Class<?>> classes) {
