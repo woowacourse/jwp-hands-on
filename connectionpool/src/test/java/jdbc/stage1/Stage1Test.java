@@ -1,13 +1,12 @@
 package jdbc.stage1;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.sql.SQLException;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.jupiter.api.Test;
-
-import java.sql.SQLException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class Stage1Test {
 
@@ -28,7 +27,9 @@ class Stage1Test {
      */
     @Test
     void testJdbcConnectionPool() throws SQLException {
-        final JdbcConnectionPool jdbcConnectionPool = null;
+        final JdbcConnectionPool jdbcConnectionPool = JdbcConnectionPool.create(
+                H2_URL, USER, PASSWORD
+        );
 
         assertThat(jdbcConnectionPool.getActiveConnections()).isZero();
         try (final var connection = jdbcConnectionPool.getConnection()) {
@@ -61,7 +62,13 @@ class Stage1Test {
     @Test
     void testHikariCP() {
         final var hikariConfig = new HikariConfig();
-
+        hikariConfig.setJdbcUrl(H2_URL);
+        hikariConfig.setUsername(USER);
+        hikariConfig.setPassword(PASSWORD);
+        hikariConfig.setMaximumPoolSize(5);
+        hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
+        hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
+        hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         final var dataSource = new HikariDataSource(hikariConfig);
         final var properties = dataSource.getDataSourceProperties();
 
