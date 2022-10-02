@@ -1,0 +1,10 @@
+# 설정 파일에서 datasource를 직접 관리할 수도 있다.
+#spring:
+#  datasource:
+#    hikari:
+#      jdbc-url: jdbc:h2:./test;DB_CLOSE_DELAY=-1
+#      username: sa
+#      password:
+#      maximum-pool-size: 15
+#      minimum-idle: 5
+#      connection-timeout: 5000
