@@ -1,7 +1,13 @@
 package transaction.stage1;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
+import javax.sql.DataSource;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -12,13 +18,6 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 import transaction.DatabasePopulatorUtils;
 import transaction.RunnableWrapper;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 격리 레벨(Isolation Level)에 따라 여러 사용자가 동시에 db에 접근했을 때 어떤 문제가 발생하는지 확인해보자.
@@ -34,10 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   Read phenomena | Dirty reads | Non-repeatable reads | Phantom reads
  * Isolation level  |             |                      |
  * -----------------|-------------|----------------------|--------------
- * Read Uncommitted |             |                      |
- * Read Committed   |             |                      |
- * Repeatable Read  |             |                      |
- * Serializable     |             |                      |
+ * Read Uncommitted |     +       |          +           |      +
+ * Read Committed   |     -       |          +           |      +
+ * Repeatable Read  |     -       |          -           |      +
+ * Serializable     |     -       |          -           |      -
  */
 class Stage1Test {
 
@@ -52,16 +51,21 @@ class Stage1Test {
     }
 
     /**
-     * 격리 수준에 따라 어떤 현상이 발생하는지 테스트를 돌려 직접 눈으로 확인하고 표를 채워보자.
      * + : 발생
      * - : 발생하지 않음
      *   Read phenomena | Dirty reads
      * Isolation level  |
      * -----------------|-------------
-     * Read Uncommitted |
-     * Read Committed   |
-     * Repeatable Read  |
-     * Serializable     |
+     * Read Uncommitted | +
+     * Read Committed   | -
+     * Repeatable Read  | -
+     * Serializable     | -
+     *
+     *
+     * isolation level : READ_UNCOMMITTED(1), user : User{id=1, account='gugu', email='hkkang@woowahan.com', password='password'}
+     * isolation level : READ_COMMITTED(2), user : null
+     * isolation level : REPEATABLE_READ(4), user : null
+     * isolation level : SERIALIZABLE(8), user : null
      */
     @Test
     void dirtyReading() throws SQLException {
@@ -81,7 +85,7 @@ class Stage1Test {
             final var subConnection = dataSource.getConnection();
 
             // 적절한 격리 레벨을 찾는다.
-            final int isolationLevel = Connection.TRANSACTION_NONE;
+            final int isolationLevel = Connection.TRANSACTION_READ_UNCOMMITTED;
 
             // 트랜잭션 격리 레벨을 설정한다.
             subConnection.setTransactionIsolation(isolationLevel);
@@ -97,7 +101,6 @@ class Stage1Test {
             log.info("isolation level : {}, user : {}", isolationLevel, actual);
             assertThat(actual).isNull();
         })).start();
-
         sleep(0.5);
 
         // 롤백하면 사용자A의 user 데이터를 저장하지 않았는데 사용자B는 user 데이터가 있다고 인지한 상황이 된다.
@@ -105,16 +108,21 @@ class Stage1Test {
     }
 
     /**
-     * 격리 수준에 따라 어떤 현상이 발생하는지 테스트를 돌려 직접 눈으로 확인하고 표를 채워보자.
      * + : 발생
      * - : 발생하지 않음
      *   Read phenomena | Non-repeatable reads
      * Isolation level  |
      * -----------------|---------------------
-     * Read Uncommitted |
-     * Read Committed   |
-     * Repeatable Read  |
-     * Serializable     |
+     * Read Uncommitted | +
+     * Read Committed   | +
+     * Repeatable Read  | -
+     * Serializable     | -
+     *
+     *
+     * isolation level : READ_UNCOMMITTED(1), user : User{id=1, account='gugu', email='hkkang@woowahan.com', password='committed-in-another-transaction'}
+     * isolation level : READ_COMMITTED(2), user : User{id=1, account='gugu', email='hkkang@woowahan.com', password='committed-in-another-transaction'}
+     * isolation level : REPEATABLE_READ(4), user : User{id=1, account='gugu', email='hkkang@woowahan.com', password='password'}
+     * isolation level : SERIALIZABLE(8), user : User{id=1, account='gugu', email='hkkang@woowahan.com', password='password'}
      */
     @Test
     void noneRepeatable() throws SQLException {
@@ -130,7 +138,7 @@ class Stage1Test {
         connection.setAutoCommit(false);
 
         // 적절한 격리 레벨을 찾는다.
-        final int isolationLevel = Connection.TRANSACTION_NONE;
+        final int isolationLevel = Connection.TRANSACTION_REPEATABLE_READ;
 
         // 트랜잭션 격리 레벨을 설정한다.
         connection.setTransactionIsolation(isolationLevel);
@@ -147,7 +155,7 @@ class Stage1Test {
             final var anotherUser = userDao.findByAccount(subConnection, "gugu");
 
             // ❗사용자B가 gugu 객체의 비밀번호를 변경했다.(subConnection은 auto commit 상태)
-            anotherUser.changePassword("qqqq");
+            anotherUser.changePassword("committed-in-another-transaction");
             userDao.update(subConnection, anotherUser);
         })).start();
 
@@ -167,16 +175,23 @@ class Stage1Test {
 
     /**
      * phantom read는 h2에서 발생하지 않는다. mysql로 확인해보자.
-     * 격리 수준에 따라 어떤 현상이 발생하는지 테스트를 돌려 직접 눈으로 확인하고 표를 채워보자.
      * + : 발생
      * - : 발생하지 않음
      *   Read phenomena | Phantom reads
      * Isolation level  |
      * -----------------|--------------
-     * Read Uncommitted |
-     * Read Committed   |
-     * Repeatable Read  |
-     * Serializable     |
+     * Read Uncommitted | +
+     * Read Committed   | +
+     * Repeatable Read  | +
+     * Serializable     | -
+     *
+     * Expected size: 1 but was: 2
+     * isolation level : READ_UNCOMMITTED(1), user : [User{id=1, account='gugu', email='hkkang@woowahan.com', password='qqqq'}, User{id=2, account='bird', email='bird@woowahan.com', password='qqqq'}]
+     * isolation level : READ_COMMITTED(2), user : [User{id=1, account='gugu', email='hkkang@woowahan.com', password='qqqq'}, User{id=2, account='bird', email='bird@woowahan.com', password='qqqq'}]
+     * isolation level : REPEATABLE_READ(4), user : [User{id=1, account='gugu', email='hkkang@woowahan.com', password='qqqq'}, User{id=2, account='bird', email='bird@woowahan.com', password='qqqq'}]
+     *
+     * Phantom Reads 미발생
+     * isolation level : SERIALIZABLE(8), user : [User{id=1, account='gugu', email='hkkang@woowahan.com', password='qqqq'}]
      */
     @Test
     void phantomReading() throws SQLException {
@@ -197,7 +212,7 @@ class Stage1Test {
         connection.setAutoCommit(false);
 
         // 적절한 격리 레벨을 찾는다.
-        final int isolationLevel = Connection.TRANSACTION_NONE;
+        final int isolationLevel = Connection.TRANSACTION_SERIALIZABLE;
 
         // 트랜잭션 격리 레벨을 설정한다.
         connection.setTransactionIsolation(isolationLevel);
@@ -205,6 +220,7 @@ class Stage1Test {
         // 사용자A가 id로 범위를 조회했다.
         userDao.findGreaterThan(connection, 1);
 
+        // 다른 트랜잭션에서 새로운 데이터를 저장하여 커밋
         new Thread(RunnableWrapper.accept(() -> {
             // 사용자B가 새로 연결하여
             final var subConnection = dataSource.getConnection();
@@ -231,7 +247,23 @@ class Stage1Test {
         // 트랜잭션 격리 레벨에 따라 아래 테스트가 통과한다.
         // 각 격리 레벨은 어떤 결과가 나오는지 직접 확인해보자.
         log.info("isolation level : {}, user : {}", isolationLevel, actual);
-        assertThat(actual).hasSize(1);
+        assertThat(actual).hasSize(1); // Phantom read 발생시 실패
+
+        // 다른 트랜잭션에서
+        new Thread(RunnableWrapper.accept(() -> {
+            // 사용자C가 새로 연결하여
+            final var subConnection = dataSource.getConnection();
+
+            // 트랜잭션 시작
+            subConnection.setAutoCommit(false);
+
+            // 최초 조회이므로 새로 커밋된 것까지 정상적으로 함께 조회됨
+            final var anotherActual = userDao.findGreaterThan(subConnection, 1);
+            log.info("isolation level : {}, user : {}", isolationLevel, actual);
+            assertThat(anotherActual).hasSize(2);
+        })).start();
+
+        sleep(0.5);
 
         connection.rollback();
         mysql.close();
