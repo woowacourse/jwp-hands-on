@@ -1,5 +1,7 @@
 # AOP 경험하기
 
+- [참고 블로그](https://gmoon92.github.io/spring/aop/2019/02/23/spring-aop-proxy-bean.html)
+
 ## 학습 목표
 
 - 메서드 단위의 트랜잭션 AOP를 구현해본다.
@@ -61,6 +63,7 @@
     - 프록시를 생성할 때 인터페이스를 직접 지정해야 한다.
     - 서비스마다 프록시를 직접 생성하기 때문에 생성자를 활용한 스프링 빈 생성이 어렵다.
 - 스프링에서 제공하는 ProxyFactoryBean 클래스를 사용하여 문제를 해결해보자.
+
 - 참고로 ProxyFactoryBean 객체는 2가지 일을 한다.
     - FactoryBean 객체는 생성자가 아닌 다른 방식(정적 팩터리 메서드)으로 스프링 빈을 생성할 때 사용한다.
         - stage0 코드를 잘 살펴보면 JDK Proxy는 생성자가 아닌 정적 팩터리 메서드로 객체를 생성하고 있다.
@@ -70,6 +73,7 @@
     - proxyTargetClass를 true로 바꾸면 CGLib를 사용하여 프록시를 생성할 수 있다.
         - 스프링 부트는 CGLib가 기본이다.
         - CGLib는 인터페이스가 아닌 클래스로 프록시를 생성할 수 있다.
+        
 - AOP 용어가 몇 가지 보인다.
     - pointcut, advice, advisor가 무엇인지 학습한다.
     - TransactionPointcut, TransactionAdvice, TransactionAdvisor 클래스를 각각 구현한다.
