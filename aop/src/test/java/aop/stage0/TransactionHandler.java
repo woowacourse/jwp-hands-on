@@ -4,7 +4,6 @@ import aop.DataAccessException;
 import aop.Transactional;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import javax.sql.DataSource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -30,7 +29,7 @@ public class TransactionHandler implements InvocationHandler {
      */
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        Method instanceMethod = getActualMethod(method);
+        Method instanceMethod = target.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
         if (!instanceMethod.isAnnotationPresent(Transactional.class)
             && !target.getClass().isAnnotationPresent(Transactional.class)) {
             return instanceMethod.invoke(target, args);
@@ -49,13 +48,5 @@ public class TransactionHandler implements InvocationHandler {
             transactionManager.rollback(transactionStatus);
             throw new DataAccessException(e);
         }
-    }
-
-    private Method getActualMethod(Method interfaceMethod) {
-        return Arrays.stream(target.getClass().getMethods())
-            .filter(it -> it.getName().equals(interfaceMethod.getName()))
-            .filter(it -> Arrays.equals(it.getParameterTypes(), interfaceMethod.getParameterTypes()))
-            .findAny()
-            .orElseThrow(() -> new RuntimeException("등록된 구현체에 존재하지 않는 메서드를 호출하였습니다."));
     }
 }

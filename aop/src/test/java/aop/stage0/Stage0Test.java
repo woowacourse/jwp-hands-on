@@ -55,9 +55,7 @@ class Stage0Test {
     @Test
     void testChangePassword() {
         final var appUserService = new AppUserService(userDao, userHistoryDao);
-        final UserService userService = (UserService) Proxy.newProxyInstance(
-            Stage0Test.class.getClassLoader(), new Class<?>[]{UserService.class},
-            new TransactionHandler(appUserService, dataSource));
+        final UserService userService = createTransactionProxy(appUserService, UserService.class);
 
         final var newPassword = "qqqqq";
         final var createBy = "gugu";
@@ -71,9 +69,7 @@ class Stage0Test {
     @Test
     void testTransactionRollback() {
         final var appUserService = new AppUserService(userDao, stubUserHistoryDao);
-        final UserService userService = (UserService) Proxy.newProxyInstance(
-            Stage0Test.class.getClassLoader(), new Class<?>[]{UserService.class},
-            new TransactionHandler(appUserService, dataSource));
+        final UserService userService = createTransactionProxy(appUserService, UserService.class);
 
         final var newPassword = "newPassword";
         final var createBy = "gugu";
@@ -83,5 +79,13 @@ class Stage0Test {
         final var actual = userService.findById(1L);
 
         assertThat(actual.getPassword()).isNotEqualTo(newPassword);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T createTransactionProxy(final Object target, final Class<T> proxyInterface) {
+        return (T) Proxy.newProxyInstance(
+            getClass().getClassLoader(),
+            new Class[]{proxyInterface},
+            new TransactionHandler(target, dataSource));
     }
 }
