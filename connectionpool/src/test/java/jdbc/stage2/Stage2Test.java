@@ -49,10 +49,10 @@ class Stage2Test {
         }
 
         // 동시에 많은 요청이 몰려도 최대 풀 사이즈를 유지한다.
-        assertThat(hikariPool.getTotalConnections()).isEqualTo(0);
+        assertThat(hikariPool.getTotalConnections()).isEqualTo(5);
 
         // DataSourceConfig 클래스에서 직접 생성한 커넥션 풀.
-        assertThat(hikariDataSource.getPoolName()).isEqualTo("");
+        assertThat(hikariDataSource.getPoolName()).isEqualTo("gugu");
     }
 
     // 데이터베이스에 연결만 하는 메서드. 커넥션 풀에 몇 개의 연결이 생기는지 확인하는 용도.
